@@ -1,47 +1,51 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import api from '../api.js';
+import { useParams } from 'react-router-dom';
+import api from '../api';
 
 export default function ProductDetail() {
   const { productId } = useParams();
-  const [product, setProduct] = useState(null);
+  const [p, setP] = useState(null);
 
   useEffect(() => {
-    api.get(`/products/${productId}`)
-      .then(res => setProduct(res.data))
-      .catch(err => console.error(err));
+    api.get(`/products/${productId}`).then(res => setP(res.data));
   }, [productId]);
 
+  if (!p) return null;
+
   const addToCart = () => {
-    const stored = JSON.parse(localStorage.getItem('cart')) || [];
-    const exists = stored.find(i => i._id === product._id);
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const exists = cart.find(i => i._id === p._id);
 
-    let updatedCart;
-    if (exists) {
-      updatedCart = stored.map(i =>
-        i._id === product._id ? { ...i, qty: i.qty + 1 } : i
-      );
-    } else {
-      updatedCart = [...stored, { ...product, qty: 1 }];
-    }
+    if (exists) exists.qty += 1;
+    else cart.push({ ...p, qty: 1 });
 
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    alert(`${product.name} added to cart`);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Added to cart');
   };
 
-  if (!product) return <p>Loading...</p>;
-
   return (
-    <div>
-      <h2>{product.name}</h2>
-      <p>Price: ₹{product.price}</p>
-      <p>Vendor: {product.vendor.name}</p>
-      <p>Category: {product.category.name}</p>
-      {product.subcategory && <p>Subcategory: {product.subcategory.name}</p>}
+    <div style={card}>
+      <h2>{p.name}</h2>
+      <p>₹{p.price}</p>
+      <p>{p.description}</p>
 
-      <button onClick={addToCart}>Add to Cart</button>
-      <br /><br />
-      <Link to={`/vendors/${product.vendor._id}/categories/${product.category._id}/sub/${product.subcategory?._id}`}>← Back to Products</Link>
+      <button onClick={addToCart} style={btn}>
+        Add to Cart
+      </button>
     </div>
   );
 }
+
+const card = {
+  background: '#fff',
+  padding: 20,
+  borderRadius: 10
+};
+
+const btn = {
+  padding: 10,
+  background: '#2563EB',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 6
+};
