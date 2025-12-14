@@ -5,12 +5,17 @@ import api from '../api';
 export default function ProductDetail() {
   const { productId } = useParams();
   const [p, setP] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get(`/products/${productId}`).then(res => setP(res.data));
+    api.get(`/products/${productId}`)
+      .then(res => setP(res.data))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
   }, [productId]);
 
-  if (!p) return null;
+  if (loading) return <p>Loading product...</p>;
+  if (!p) return <p>Product not found</p>;
 
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
