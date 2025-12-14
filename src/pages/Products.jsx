@@ -5,11 +5,17 @@ import api from '../api';
 export default function Products() {
   const { subcategoryId } = useParams();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get(`/products/sub/${subcategoryId}`)
-      .then(res => setProducts(res.data));
+      .then(res => setProducts(res.data))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
   }, [subcategoryId]);
+
+  if (loading) return <p>Loading products...</p>;
+  if (!products.length) return <p>No products found</p>;
 
   return (
     <div>
