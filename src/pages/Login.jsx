@@ -1,28 +1,41 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import api from '../api';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function UserLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const nav = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: call backend API for login
-    console.log('Login:', { email, password });
-    alert('Login successful (dummy)');
-    navigate('/'); // redirect to home after login
+  const submit = async () => {
+    try {
+      const res = await api.post('/user/login', { email, password });
+      localStorage.setItem('userToken', res.data.token);
+      nav('/');
+    } catch (e) {
+      alert('Invalid login');
+    }
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '50px auto', padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-        <button type="submit" style={{ padding: 10, backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: 5 }}>Login</button>
-      </form>
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
+    <div style={box}>
+      <h2>User Login</h2>
+
+      <input placeholder="Email" onChange={e=>setEmail(e.target.value)} />
+      <input type="password" placeholder="Password" onChange={e=>setPassword(e.target.value)} />
+
+      <button onClick={submit}>Login</button>
     </div>
   );
 }
+
+const box = {
+  maxWidth: 350,
+  margin: '60px auto',
+  background: '#fff',
+  padding: 20,
+  borderRadius: 10,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 10
+};
