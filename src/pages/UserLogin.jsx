@@ -5,37 +5,25 @@ import { useNavigate } from 'react-router-dom';
 export default function UserLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
-  const submit = async () => {
+  const handleLogin = async () => {
     try {
-      const res = await api.post('/user/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       localStorage.setItem('userToken', res.data.token);
-      nav('/');
-    } catch (e) {
-      alert('Invalid login');
+      alert('Login successful!');
+      navigate('/');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <div style={box}>
+    <div style={{ padding: 20 }}>
       <h2>User Login</h2>
-
-      <input placeholder="Email" onChange={e=>setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e=>setPassword(e.target.value)} />
-
-      <button onClick={submit}>Login</button>
+      <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }
-
-const box = {
-  maxWidth: 350,
-  margin: '60px auto',
-  background: '#fff',
-  padding: 20,
-  borderRadius: 10,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10
-};
