@@ -14,7 +14,7 @@ import Checkout from "./pages/Checkout.jsx";
 import UserLogin from "./pages/UserLogin.jsx";
 import UserRegister from "./pages/Register.jsx";
 
-import UserPrivateRoute from "./routes/UserPrivateRoute.jsx";
+import UserPrivateRoute from "./components/UserPrivateRoute.jsx";
 
 export default function App() {
   return (
