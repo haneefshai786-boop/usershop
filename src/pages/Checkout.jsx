@@ -1,61 +1,38 @@
-import api from '../api';
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Checkout() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
 
-  const placeOrder = async () => {
-    await api.post('/orders', {
-      items: cart.map(i => ({
-        product: i._id,
-        name: i.name,
-        price: i.price,
-        qty: i.qty
-      })),
-      total
-    });
-
-    alert('Order placed successfully');
-    localStorage.removeItem('cart');
+  const handlePayment = () => {
+    setLoading(true);
+    setTimeout(() => {
+      alert('Payment successful (demo)');
+      localStorage.removeItem('cart');
+      setLoading(false);
+      navigate('/');
+    }, 1000);
   };
 
+  if (cart.length === 0) return <p>Cart is empty</p>;
+
   return (
-    <div style={card}>
-      <h2>Payment</h2>
-
-      <p>Total: ₹{total}</p>
-
-      <button style={cod} onClick={placeOrder}>
-        Cash on Delivery
-      </button>
-
-      <button style={online} onClick={() => alert('Online payment coming soon')}>
-        Online Payment
+    <div>
+      <h1>Checkout</h1>
+      {cart.map(i => (
+        <div key={i._id}>
+          {i.name} x {i.qty} = ₹{i.price * i.qty}
+        </div>
+      ))}
+      <h2>Total: ₹{total}</h2>
+      <button onClick={handlePayment} disabled={loading}>
+        {loading ? 'Processing...' : 'Pay Now'}
       </button>
     </div>
   );
 }
-
-const card = {
-  background:'#fff',
-  padding:20,
-  borderRadius:10
-};
-
-const cod = {
-  width:'100%',
-  padding:12,
-  marginTop:10,
-  background:'#2563EB',
-  color:'#fff',
-  border:'none'
-};
-
-const online = {
-  width:'100%',
-  padding:12,
-  marginTop:10,
-  background:'#F59E0B',
-  color:'#fff',
-  border:'none'
-};
