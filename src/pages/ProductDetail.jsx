@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api.js';
 
 export default function ProductDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get(`/products/${productId}`)
@@ -12,33 +13,24 @@ export default function ProductDetail() {
       .catch(err => console.error(err));
   }, [productId]);
 
-  const addToCart = () => {                                                                         const stored = JSON.parse(localStorage.getItem('cart')) || [];
-    const exists = stored.find(i => i._id === product._id);
-
-    let updatedCart;
-    if (exists) {
-      updatedCart = stored.map(i =>
-        i._id === product._id ? { ...i, qty: i.qty + 1 } : i
-      );
-    } else {                                                                                          updatedCart = [...stored, { ...product, qty: 1 }];
-    }
-
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    alert(`${product.name} added to cart`);
+  const addToCart = () => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(i => i._id === product._id);
+    if (existing) existing.qty += 1;
+    else cart.push({ ...product, qty: 1 });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Added to cart!');
   };
 
   if (!product) return <p>Loading...</p>;
 
   return (
     <div>
-      <h2>{product.name}</h2>
-      <p>Price: ₹{product.price}</p>
-      <p>Vendor: {product.vendor.name}</p>
-      <p>Category: {product.category.name}</p>
-      {product.subcategory && <p>Subcategory: {product.subcategory.name}</p>}
-
-      <button onClick={addToCart}>Add to Cart</button>                                                <br /><br />
-      <Link to={`/vendors/${product.vendor._id}/categories/${product.category._id}/sub/${produc>
+      <h1>{product.name}</h1>
+      <p>₹{product.price}</p>
+      <p>{product.description}</p>
+      <button onClick={addToCart}>Add to Cart</button>
+      <button onClick={() => navigate(-1)}>← Back</button>
     </div>
   );
 }
