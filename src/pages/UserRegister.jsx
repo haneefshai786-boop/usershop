@@ -2,38 +2,29 @@ import { useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
-export default function UserRegister() {
-  const [name,setName] = useState('');
-  const [email,setEmail] = useState('');
-  const [password,setPassword] = useState('');
-  const nav = useNavigate();
+export default function Register() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const submit = async () => {
-    await api.post('/user/register', { name, email, password });
-    alert('Registered');
-    nav('/login');
+  const handleRegister = async () => {
+    try {
+      await api.post('/auth/register', { name, email, password });
+      alert('Registered successfully!');
+      navigate('/login');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Registration failed');
+    }
   };
 
   return (
-    <div style={box}>
+    <div style={{ padding: 20 }}>
       <h2>Register</h2>
-
-      <input placeholder="Name" onChange={e=>setName(e.target.value)} />
-      <input placeholder="Email" onChange={e=>setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e=>setPassword(e.target.value)} />
-
-      <button onClick={submit}>Register</button>
+      <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
+      <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+      <button onClick={handleRegister}>Register</button>
     </div>
   );
 }
-
-const box = {
-  maxWidth: 350,
-  margin: '60px auto',
-  background: '#fff',
-  padding: 20,
-  borderRadius: 10,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10
-};
