@@ -1,57 +1,70 @@
-import { useCart } from "../context/CartContext";
+import { useState, useEffect } from "react";
 
 export default function Cart() {
-  const {
-    cart,
-    removeFromCart,
-    increaseQty,
-    decreaseQty
-  } = useCart();
-
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
+  const [cart, setCart] = useState(
+    JSON.parse(localStorage.getItem("cart")) || []
   );
 
-  if (cart.length === 0) {
-    return <h2>Your cart is empty</h2>;
-  }
+  // Update localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const increment = (id) => {
+    const updated = cart.map(item =>
+      item._id === id ? { ...item, qty: item.qty + 1 } : item
+    );
+    setCart(updated);
+  };
+
+  const decrement = (id) => {
+    const updated = cart.map(item =>
+      item._id === id ? { ...item, qty: Math.max(item.qty - 1, 1) } : item
+    );
+    setCart(updated);
+  };
+
+  const remove = (id) => {
+    if (!confirm("Remove this item from cart?")) return;
+    setCart(cart.filter(item => item._id !== id));
+  };
+
+  const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+
+  if (cart.length === 0) return <p>Your cart is empty.</p>;
 
   return (
     <div>
-      <h2>Cart</h2>
-
+      <h3>My Cart</h3>
       {cart.map(item => (
         <div
           key={item._id}
           style={{
-            border: "1px solid #ccc",
-            padding: 10,
-            marginBottom: 10
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 10,
+            borderBottom: "1px solid #ddd",
+            paddingBottom: 5
           }}
         >
-          <h4>{item.name}</h4>
-          <p>Price: ₹{item.price}</p>
-
-          <button onClick={() => decreaseQty(item._id)}>-</button>
-          <span style={{ margin: "0 10px" }}>{item.qty}</span>
-          <button onClick={() => increaseQty(item._id)}>+</button>
-
-          <br /><br />
-
-          <button
-            onClick={() => removeFromCart(item._id)}
-            style={{ color: "red" }}
-          >
-            Remove
-          </button>
+          <span>
+            {item.name} – ₹{item.price} × {item.qty}
+          </span>
+          <span>
+            <button onClick={() => increment(item._id)}>+</button>
+            <button onClick={() => decrement(item._id)}>-</button>
+            <button onClick={() => remove(item._id)}>Remove</button>
+          </span>
         </div>
       ))}
 
-      <h3>Total: ₹{total}</h3>
+      <h4>Total: ₹{total}</h4>
 
-      <button disabled style={{ marginTop: 10 }}>
-        Checkout (Coming Soon)
+      <button
+        onClick={() => alert("Checkout functionality pending...")}
+        style={{ marginTop: 10 }}
+      >
+        Proceed to Checkout
       </button>
     </div>
   );
