@@ -1,29 +1,31 @@
-import { useState } from 'react';
-import api from '../api';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../api";
+import { useAuth } from "../context/AuthContext";
 
-export default function UserLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const submit = async () => {
     try {
-      const res = await api.post('/auth/login', { email, password });
-      localStorage.setItem('userToken', res.data.token);
-      alert('Login successful!');
-      navigate('/');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Login failed');
+      const res = await api.post("/user/login", { email, password });
+      login(res.data.user, res.data.token);
+      navigate("/");
+    } catch {
+      alert("Login failed");
     }
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div>
       <h2>User Login</h2>
-      <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button onClick={handleLogin}>Login</button>
+      <input placeholder="Email" onChange={e=>setEmail(e.target.value)} />
+      <input placeholder="Password" type="password" onChange={e=>setPassword(e.target.value)} />
+      <button onClick={submit}>Login</button>
+      <p>No account? <Link to="/register">Register</Link></p>
     </div>
   );
 }
