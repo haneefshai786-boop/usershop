@@ -1,27 +1,22 @@
-import { useEffect, useState } from 'react';
-import api from '../api.js';
+import { useEffect,useState } from "react";
+import api from "../api";
 
-export default function Orders() {
-  const [orders, setOrders] = useState([]);
+export default function Orders(){
+  const [orders,setOrders]=useState([]);
 
-  useEffect(() => {
-    api.get('/orders')
-      .then(res => setOrders(res.data))
-      .catch(err => console.error(err));
-  }, []);
+  useEffect(()=>{
+    api.get("/orders/my")
+      .then(res=>setOrders(res.data))
+      .catch(()=>alert("Failed to load orders"));
+  },[]);
 
-  return (
+  return(
     <div>
-      <h2>Orders</h2>
-
-      {orders.map(o => (
-        <div key={o._id} style={{ border: '1px solid #ccc', padding: 10, marginTop: 10 }}>
+      <h2>My Orders</h2>
+      {orders.map(o=>(
+        <div key={o._id}>
           <p>Status: {o.status}</p>
-          <p>Total: ₹{o.total}</p>
-
-          {o.items.map((i, idx) => (
-            <p key={idx}>{i.name} × {i.qty}</p>
-          ))}
+          <p>Items: {o.items.length}</p>
         </div>
       ))}
     </div>
