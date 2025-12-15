@@ -1,60 +1,45 @@
-// src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext.jsx'; // Context for user auth
-import PrivateRoute from './components/PrivateRoute.jsx';
 
-// Pages
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
-import Products from './pages/Products.jsx';
-import Cart from './pages/Cart.jsx';
-import UserOrders from './pages/UserOrders.jsx';
-import Checkout from './pages/Checkout.jsx';
+// src/App.jsx
+import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
+
+import Login from "./pages/Login.jsx";
+import Products from "./pages/Products.jsx";
+import Cart from "./pages/Cart.jsx";
+import Checkout from "./pages/Checkout.jsx";
+import UserOrders from "./pages/UserOrders.jsx";
+import UserPrivateRoute from "./components/UserPrivateRoute.jsx";
 
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <Routes>
+        <Route path="/login" element={<Login />} />
 
-          {/* Protected User Routes */}
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Products />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="cart"
-            element={
-              <PrivateRoute>
-                <Cart />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="orders"
-            element={
-              <PrivateRoute>
-                <UserOrders />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="checkout"
-            element={
-              <PrivateRoute>
-                <Checkout />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </Router>
+        <Route path="/" element={
+          <UserPrivateRoute>
+            <Products />
+          </UserPrivateRoute>
+        } />
+
+        <Route path="/cart" element={
+          <UserPrivateRoute>
+            <Cart />
+          </UserPrivateRoute>
+        } />
+
+        <Route path="/checkout" element={
+          <UserPrivateRoute>
+            <Checkout />
+          </UserPrivateRoute>
+        } />
+
+        <Route path="/orders" element={
+          <UserPrivateRoute>
+            <UserOrders />
+          </UserPrivateRoute>
+        } />
+      </Routes>
     </AuthProvider>
   );
 }
