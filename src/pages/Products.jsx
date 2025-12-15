@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../api";
-import CartButton from "../components/CartButton";
+import { useCart } from "../context/CartContext";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     api.get("/products")
@@ -18,17 +19,14 @@ export default function Products() {
       {products.map(p => (
         <div
           key={p._id}
-          style={{
-            border: "1px solid #ccc",
-            margin: 10,
-            padding: 10
-          }}
+          style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}
         >
           <h4>{p.name}</h4>
           <p>₹{p.price}</p>
 
-          {/* ONLY THIS */}
-          <CartButton product={p} />
+          <button onClick={() => addToCart(p)}>
+            Add to Cart
+          </button>
         </div>
       ))}
     </div>
