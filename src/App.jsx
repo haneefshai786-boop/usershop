@@ -1,45 +1,60 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext.jsx'; // Context for user auth
+import PrivateRoute from './components/PrivateRoute.jsx';
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Products from "./pages/Products";
-import Cart from "./pages/Cart";
-import Orders from "./pages/User/Orders";
-import Checkout from "./pages/Checkout";
-import UserLayout from "./layout/UserLayout";
-
-/* Protect user routes */
-function PrivateRoute({ children }) {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" />;
-}
+// Pages
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import Products from './pages/Products.jsx';
+import Cart from './pages/Cart.jsx';
+import UserOrders from './pages/UserOrders.jsx';
+import Checkout from './pages/Checkout.jsx';
 
 export default function App() {
   return (
     <AuthProvider>
-      <Routes>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Public */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* User Layout */}
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <UserLayout />
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Products />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="orders" element={<User/Orders />} />
-          <Route path="checkout" element={<Checkout />} />
-        </Route>
-
-      </Routes>
+          {/* Protected User Routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Products />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="cart"
+            element={
+              <PrivateRoute>
+                <Cart />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="orders"
+            element={
+              <PrivateRoute>
+                <UserOrders />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="checkout"
+            element={
+              <PrivateRoute>
+                <Checkout />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
     </AuthProvider>
   );
 }
