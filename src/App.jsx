@@ -1,58 +1,27 @@
+import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
+import Navbar from "./components/Navbar";
 
-import { Routes, Route } from 'react-router-dom';
-import UserLayout from './layout/UserLayout.jsx';
-import Home from './pages/Home.jsx';
-import Vendors from './pages/Vendors.jsx';
-import Categories from './pages/Categories.jsx';
-import Subcategories from './pages/Subcategories.jsx';
-import Products from './pages/Products.jsx';
-import ProductDetail from './pages/ProductDetail.jsx';
-import Cart from './pages/Cart.jsx';
-import Checkout from './pages/Checkout.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Products from "./pages/Products";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
 
 export default function App() {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+    <AuthProvider>
+      <Navbar />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-      {/* Main User Routes */}
-      <Route path="/" element={<UserLayout />}>
-        <Route index element={<Home />} />
-
-        {/* Vendors */}
-        <Route path="vendors" element={<Vendors />} />
-
-        {/* Categories by vendor */}
-        <Route path="vendors/:vendorId" element={<Categories />} />
-
-        {/* Subcategories by category */}
-        <Route
-          path="vendors/:vendorId/categories/:categoryId"
-          element={<Subcategories />}
-        />
-
-        {/* Products by subcategory */}
-        <Route
-          path="vendors/:vendorId/categories/:categoryId/sub/:subcategoryId"
-          element={<Products />}
-        />
-
-        {/* Product details */}
-        <Route path="product/:productId" element={<ProductDetail />} />
-
-        {/* Cart */}
-        <Route path="cart" element={<Cart />} />
-
-        {/* Checkout */}
-        <Route path="checkout" element={<Checkout />} />
-      </Route>
-
-      {/* Catch-all fallback */}
-      <Route path="*" element={<div>Page Not Found</div>} />
-    </Routes>
+        <Route path="/" element={<PrivateRoute><Products /></PrivateRoute>} />
+        <Route path="/cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
+        <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
+        <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
+      </Routes>
+    </AuthProvider>
   );
-}
