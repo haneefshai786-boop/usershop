@@ -1,36 +1,32 @@
-
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import api from '../api.js';
+import { useEffect, useState } from "react";
+import api from "../api";
 
 export default function Products() {
-  const { vendorId, categoryId, subcategoryId } = useParams();
-  const [products, setProducts] = useState([]);
+  const [products,setProducts]=useState([]);
+  const [cart,setCart]=useState(JSON.parse(localStorage.getItem("cart"))||[]);
 
-  useEffect(() => {
-    api.get(`/products/subcategory/${subcategoryId}`)
-      .then(res => setProducts(res.data))
-      .catch(err => console.error(err));
-  }, [subcategoryId]);
+  useEffect(()=>{
+    api.get("/products")
+      .then(res=>setProducts(res.data))
+      .catch(()=>alert("Failed to load products"));
+  },[]);
 
-  return (
+  const addToCart=(product)=>{
+    const updated=[...cart,{...product,qty:1}];
+    setCart(updated);
+    localStorage.setItem("cart",JSON.stringify(updated));
+  };
+
+  return(
     <div>
-      <h1>Products</h1>
-      <Link to={`/vendors/${vendorId}/categories/${categoryId}`}>← Back to Subcategories</Link>
-
-      {products.length === 0 ? (
-        <p>No products found.</p>
-      ) : (
-        <div style={{ display: 'grid', gap: 15 }}>
-          {products.map(p => (
-            <div key={p._id} style={{ border: '1px solid #ccc', padding: 10 }}>
-              <h3>{p.name}</h3>
-              <p>₹{p.price}</p>
-              <Link to={`/product/${p._id}`}>View Details</Link>
-            </div>
-          ))}
+      <h2>Products</h2>
+      {products.map(p=>(
+        <div key={p._id} style={{border:"1px solid #ccc",margin:10,padding:10}}>
+          <h4>{p.name}</h4>
+          <p>₹{p.price}</p>
+          <button onClick={()=>addToCart(p)}>Add to Cart</button>
         </div>
-      )}
+      ))}
     </div>
   );
 }
