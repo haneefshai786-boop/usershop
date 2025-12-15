@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
-import Orders from "./pages/Orders";
+import Orders from "./pages/User/Orders";
 import Checkout from "./pages/Checkout";
 import UserLayout from "./layout/UserLayout";
 
@@ -35,7 +35,7 @@ export default function App() {
         >
           <Route index element={<Products />} />
           <Route path="cart" element={<Cart />} />
-          <Route path="orders" element={<Orders />} />
+          <Route path="orders" element={<User/Orders />} />
           <Route path="checkout" element={<Checkout />} />
         </Route>
 
