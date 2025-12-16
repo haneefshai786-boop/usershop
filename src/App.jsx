@@ -1,45 +1,34 @@
 
-// src/App.jsx
 import { Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext.jsx";
+import Navbar from "./components/Navbar";
+import UserPrivateRoute from "./components/UserPrivateRoute";
 
-import Login from "./pages/Login.jsx";
-import Products from "./pages/Products.jsx";
-import Cart from "./pages/Cart.jsx";
-import Checkout from "./pages/Checkout.jsx";
-import UserOrders from "./pages/UserOrders.jsx";
-import UserPrivateRoute from "./components/UserPrivateRoute.jsx";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Vendors from "./pages/Vendors";
+import Categories from "./pages/Categories";
+import Subcategories from "./pages/Subcategories";
+import Products from "./pages/Products";
+import Cart from "./pages/Cart";
+import Orders from "./pages/Orders";
 
-export default function App() {
-  return (
-    <AuthProvider>
+export default function App(){
+  return(
+    <>
+      <Navbar/>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Register/>}/>
 
-        <Route path="/" element={
-          <UserPrivateRoute>
-            <Products />
-          </UserPrivateRoute>
-        } />
-
-        <Route path="/cart" element={
-          <UserPrivateRoute>
-            <Cart />
-          </UserPrivateRoute>
-        } />
-
-        <Route path="/checkout" element={
-          <UserPrivateRoute>
-            <Checkout />
-          </UserPrivateRoute>
-        } />
-
-        <Route path="/orders" element={
-          <UserPrivateRoute>
-            <UserOrders />
-          </UserPrivateRoute>
-        } />
+        <Route element={<UserPrivateRoute/>}>
+          <Route path="/" element={<Vendors/>}/>
+          <Route path="/vendor/:id/categories" element={<Categories/>}/>
+          <Route path="/category/:id/subcategories" element={<Subcategories/>}/>
+          <Route path="/subcategory/:id/products" element={<Products/>}/>
+          <Route path="/cart" element={<Cart/>}/>
+          <Route path="/orders" element={<Orders/>}/>
+        </Route>
       </Routes>
-    </AuthProvider>
+    </>
   );
 }
